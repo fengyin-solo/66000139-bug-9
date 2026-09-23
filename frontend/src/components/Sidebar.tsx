@@ -1,6 +1,7 @@
 import { useDesignStore } from '../store/design'
 import { THEMES } from '../themes/palettes'
 import type { PatternType } from '../types'
+import PreviewPanel from './PreviewPanel'
 
 const PATTERNS: { value: PatternType; label: string }[] = [
   { value: 'spiral',  label: '🌀 螺旋' },
@@ -12,6 +13,7 @@ const PATTERNS: { value: PatternType; label: string }[] = [
 
 export default function Sidebar() {
   const store = useDesignStore()
+  const exportDisabled = store.render.status === 'generating' || !store.svgContent
 
   return (
     <div className="w-72 bg-gray-900 border-l border-gray-700 p-4 overflow-y-auto flex flex-col gap-4">
@@ -91,10 +93,15 @@ export default function Sidebar() {
           onChange={e => store.setParam('opacity', Number(e.target.value))} className="w-full accent-pink-500" />
       </div>
 
+      {/* Preview */}
+      <PreviewPanel />
+
       {/* Export */}
       <div className="flex gap-2 mt-2">
-        <button onClick={() => store.exportSvg()} className="flex-1 py-2 bg-teal-600 rounded text-sm font-medium">⬇ SVG</button>
-        <button onClick={() => store.exportPng()} className="flex-1 py-2 bg-rose-600 rounded text-sm font-medium">⬇ PNG</button>
+        <button onClick={() => store.exportSvg()} disabled={exportDisabled}
+          className="flex-1 py-2 bg-teal-600 rounded text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">⬇ SVG</button>
+        <button onClick={() => store.exportPng()} disabled={exportDisabled}
+          className="flex-1 py-2 bg-rose-600 rounded text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">⬇ PNG</button>
       </div>
     </div>
   )
